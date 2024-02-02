@@ -3,9 +3,7 @@ use std::{
     thread,
 };
 
-mod lib;
-
-use lib::{scrape, write_curiosities_to_file, Result};
+use curiosities_scraper::{scrape, write_curiosities_to_file, Result};
 
 fn main() -> Result<()> {
     let cpus = num_cpus::get();
