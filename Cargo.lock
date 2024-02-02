@@ -142,6 +142,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "curiosities-scraper"
+version = "0.1.0"
+dependencies = [
+ "num_cpus",
+ "reqwest",
+ "scraper",
+]
+
+[[package]]
 name = "derive_more"
 version = "0.99.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1399,15 +1408,6 @@ name = "wasm-bindgen-shared"
 version = "0.2.90"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d91413b1c31d7539ba5ef2451af3f0b833a005eb27a631cec32bc0635a8602b"
-
-[[package]]
-name = "web-scraper"
-version = "0.1.0"
-dependencies = [
- "num_cpus",
- "reqwest",
- "scraper",
-]
 
 [[package]]
 name = "web-sys"

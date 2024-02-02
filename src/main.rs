@@ -1,61 +1,11 @@
 use std::{
-    error::Error,
-    fs::File,
-    io::{BufWriter, Write},
-    ops::RangeInclusive,
-    sync::mpsc::{self, Receiver, Sender},
+    sync::mpsc::{self},
     thread,
 };
 
-type Result<T> = std::result::Result<T, Box<dyn Error>>;
+mod lib;
 
-const URL: &str = "https://curiositadalmondo.it/tutte-le-curiosita/?avia-element-paging={}";
-const CURIOSITIES_FILE: &str = "curiosities.txt";
-
-fn fetch_page(page: i32) -> Result<String> {
-    let response = reqwest::blocking::get(format!("{}", URL.replace("{}", &page.to_string())))?;
-    let text = response.text()?;
-
-    Ok(text)
-}
-
-fn scrape_curiosity<'a>(text: &'a str) -> Result<Vec<String>> {
-    let document = scraper::Html::parse_document(text);
-    let selector = scraper::Selector::parse(".entry-title")?;
-    let v = document
-        .select(&selector)
-        .map(|curiosity| curiosity.text().collect::<Vec<_>>().join(""))
-        .collect::<Vec<String>>();
-
-    Ok(v)
-}
-
-fn scrape(range: RangeInclusive<i32>, sender: Sender<Vec<String>>) -> Result<()> {
-    println!("Scraping pages {}..{}", range.start(), range.end());
-
-    for page in range {
-        let text = fetch_page(page)?;
-        let curiosities = scrape_curiosity(&text)?;
-
-        sender.send(curiosities)?;
-    }
-
-    Ok(())
-}
-
-fn write_curiosities_to_file(receiver: Receiver<Vec<String>>) -> Result<()> {
-    let file = File::create(CURIOSITIES_FILE)?;
-    let mut buffer = BufWriter::new(file);
-
-    for received in receiver {
-        println!("Writing {} curiosities to file", received.len());
-
-        buffer.write(received.join("\n").as_bytes())?;
-    }
-
-    buffer.flush()?;
-    Ok(())
-}
+use lib::{scrape, write_curiosities_to_file, Result};
 
 fn main() -> Result<()> {
     let cpus = num_cpus::get();
