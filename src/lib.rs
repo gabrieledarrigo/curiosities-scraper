@@ -21,12 +21,12 @@ pub fn fetch_page(page: i32) -> Result<String> {
 pub fn scrape_curiosity<'a>(text: &'a str) -> Result<Vec<String>> {
     let document = scraper::Html::parse_document(text);
     let selector = scraper::Selector::parse(".entry-title")?;
-    let v = document
+    let vector = document
         .select(&selector)
         .map(|curiosity| curiosity.text().collect::<Vec<_>>().join(""))
         .collect::<Vec<String>>();
 
-    Ok(v)
+    Ok(vector)
 }
 
 pub fn scrape(range: RangeInclusive<i32>, sender: Sender<Vec<String>>) -> Result<()> {
